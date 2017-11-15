@@ -304,7 +304,14 @@ export default new class Util{
 	}
 	// ブラウザ間の差異を吸収しつつscroll位置をセットする
 	setScrollTop (top) {
-		const tgt = (this.browser.isWebKit) ? document.body : document.documentElement;
+		let tgt;
+		if ('scrollingElement' in document) {
+			tgt = document.scrollingElement;
+		} else if (this.browser.isWebKit) {
+			tgt = document.body;
+		} else {
+			tgt = document.documentElement;
+		}
 		tgt.scrollTop = top;
 	}
 	getScrollTop () {
@@ -312,6 +319,12 @@ export default new class Util{
 		const b = d.body;
 		return (window.pageYOffset) ?
 			window.pageYOffset : (d.documentElement || b.parentNode || b).scrollTop;
+	}
+	getScrollLeft () {
+		const d = window.document;
+		const b = d.body;
+		return (window.pageXOffset) ?
+			window.pageXOffset : (d.documentElement || b.parentNode || b).scrollLeft;
 	}
 
 	// XSS対策：textをサニタイズする関数
@@ -345,7 +358,7 @@ export default new class Util{
 	}
 
 	// cookieのread/write
-	cookieReader () {
+	getCookie () {
 		const cookie = document.cookie.split(';');
 		let cookieObj = {};
 		cookie.forEach(elm => {
@@ -357,18 +370,18 @@ export default new class Util{
 		return cookieObj;
 	}
 
-	cookieSetter (key, value, expireHour) {
+	setCookie (key, value, expireHour) {
 		const now = new Date().getTime();
 		const extime = new Date(now + (60*60*1000*expireHour)).toGMTString();
 		document.cookie = key + '=' + value + ';' + 'expires=' + extime;
 	}
 
-	cookieRemover (key) {
+	removeCookie (key) {
 		const keys = (typeof key == 'string') ? [key] : key;
 		if (key.constructor !== Array) return false;
-		const extime = new Date().getTime();
+
 		keys.forEach(item => {
-			document.cookie = item + '=;expires=' + extime;
+			this.setCookie(item, null, 0);
 		});
 	}
 };
