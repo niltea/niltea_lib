@@ -115,6 +115,95 @@ if (!Array.from) {
 		clearTimeout(id);
 	};
 }());
+
+// options {
+// 	target       : target DOM to handle
+// 	button       : target DOM to trigger
+// 	closeButton  : target DOM to close trigger
+// 	visibleClass : (string) class name when target is visible
+// 	hiddenClass    : (string) class name when target is hidden
+// }
+class OpenClose {
+	constructor (options) {
+		const self = this;
+		this.button = options.button;
+		this.target = options.target;
+		const closeButton = options.closeButton;
+		this.visibleClass = options.visibleClass || 'is-visible';
+		this.hiddenClass = options.hiddenClass || 'is-hidden';
+
+		this.showCallback = options.showCallback;
+		this.hideCallback = options.hideCallback;
+
+		const initialShown = options.initialShown || false;
+
+		if (!this.button || !this.target) return;
+		// this.wrapper = document.getElementById('wrapper');
+		this.isShown = false;
+		this.scrollY = 0;
+		this.button.addEventListener('click', this.tgtDisp.bind(this));
+		if (closeButton) {
+			if (closeButton.constructor === Array) {
+				closeButton.forEach((button) => {
+					button.addEventListener('click', self.toClose.bind(self));
+				});
+			} else {
+				closeButton.addEventListener('click', self.toClose.bind(self));
+			}
+		}
+		if (options.isCloseByTarget) {
+			self.gnav.addEventListener('click', self.toClose.bind(self));
+		}
+
+		// 初期状態をセット
+		this.tgtDisp(initialShown);
+		if (options.initCallback) options.initCallback();
+	}
+	// 表示・非表示を切り替える関数
+	//	opt		:	Boolean [true | false]
+	// 	true	:	強制的に表示する
+	// 	false	:	強制的に隠す
+	// 	null	:	(default) 表示のトグル
+	tgtDisp (opt) {
+		if (opt.constructor !== Boolean) {
+			// true/false以外が渡されたときは現在の表示状況に応じてオプションを設定
+			opt = (this.isShown === true)? false : true;
+		}
+		if (opt === true) {
+			// to Show
+			if (this.visibleClass) {
+				this.target.classList.add(this.visibleClass);
+				this.button.classList.add(this.visibleClass);
+			}
+			if (this.hiddenClass) {
+				this.target.classList.remove(this.hiddenClass);
+				this.button.classList.remove(this.hiddenClass);
+			}
+			this.isShown = true;
+			// this.scrollY = util.getScrollTop();
+			// this.wrapper.style.position = 'fixed';
+			// this.wrapper.style.top = self.scrollY * -1 + 'px';
+			if (this.showCallback) this.showCallback();
+		} else {
+			// to Hide
+			if (this.visibleClass) {
+				this.target.classList.remove(this.visibleClass);
+				this.button.classList.remove(this.visibleClass);
+			}
+			if (this.hiddenClass) {
+				this.target.classList.add(this.hiddenClass);
+				this.button.classList.add(this.hiddenClass);
+			}
+			this.isShown = false;
+			// this.wrapper.style.position = '';
+			// this.wrapper.style.top = '';
+			// util.setScrollTop(this.scrollY);
+			if (this.hideCallback) this.hideCallback();
+		}
+	}
+	toClose () { this.tgtDisp(false); }
+}
+
 export default new class Util{
 	constructor() {
 		this.browser = this.browser();
@@ -249,6 +338,10 @@ export default new class Util{
 		string = string.replace(/&lt;br &#x2F;&gt;/g, '<br />');
 		string = string.replace(/{!img:(([a-z0-9:/.\-_]|&#x2F;)+):!img}/g, '<img src="$1">');
 		return string;
+	}
+
+	OpenClose (opts) {
+		return new OpenClose(opts);
 	}
 
 	// cookieのread/write
