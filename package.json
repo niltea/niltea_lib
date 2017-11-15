@@ -1,0 +1,21 @@
+{
+  "name": "niltea-lib",
+  "version": "1.0.0",
+  "description": "Frontend utilities for niltea",
+  "main": "src/util.js",
+  "repository": "git@github.com:niltea/niltea_lib.git",
+  "author": "niltea <futurabodoni@gmail.com> (http://nilgiri-tea.net/)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --fix src/*.js"
+  },
+  "dependencies": {
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "webpack": "^3.8.1"
+  }
+}
