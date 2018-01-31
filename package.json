@@ -11,12 +11,15 @@
     "build": "webpack",
     "watch": "webpack -w",
     "lint": "eslint --fix src/*.js",
-    "server": "lite-server",
     "test": "node jasmine-runner.js",
-    "start": "yarn run server & yarn run watch"
+    "start": "webpack-dev-server --inline --hot"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "decode": "^0.3.0",
     "eslint": "^4.11.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-friendly-formatter": "^3.0.0",
@@ -24,10 +27,11 @@
     "eslint-plugin-import": "^2.8.0",
     "jasmine": "^2.8.0",
     "jasmine-spec-reporter": "^4.2.1",
-    "lite-server": "^2.3.0",
     "path": "^0.12.7",
     "rewire": "^3.0.0",
     "ts-loader": "^3.4.0",
-    "webpack": "^3.8.1"
+    "typescript": "^2.6.2",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.11.1"
   }
 }

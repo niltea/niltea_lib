@@ -6,9 +6,6 @@ extends: 'airbnb-base'
 parserOptions:
   sourceType: module
 rules:
-  indent:
-    - error
-    - tab
   no-tabs:
     - off
   arrow-body-style:
