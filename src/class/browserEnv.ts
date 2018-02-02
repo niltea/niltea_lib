@@ -26,7 +26,8 @@ interface envObj {
   isWebKit: boolean;
   isiOS: boolean;
   isAndroid: boolean;
-  browserVer: string,
+  browserVer: string;
+  browserName: string;
   OSVer: string;
   clickEv: string;
   scrollEv: string;
@@ -46,6 +47,7 @@ const getEnv = (argAgent = null) => {// UserAgentを取得
     isiOS: false,
     isAndroid: false,
     browserVer: null,
+    browserName: null,
     OSVer: null,
     clickEv: null,
     scrollEv: null,
@@ -53,6 +55,7 @@ const getEnv = (argAgent = null) => {// UserAgentを取得
   // IE
   if (agent.match(/msie|trident/)) {
     envValue.isIE = true;
+    envValue.browserName = 'MSIE';
     // OSバージョン
     const OSVer = getVer(agent, 'windows ', ';') || getVer(agent, 'windows ', ')');
     envValue.OSVer = OSVer.match(/[0-9.]+/)[0];
@@ -73,8 +76,10 @@ const getEnv = (argAgent = null) => {// UserAgentを取得
       envValue.isWebKit = true;
       if (agent.indexOf('chrome') !== -1) {
         envValue.browserVer = getVer(agent, 'chrome/', ' ');
+        envValue.browserName = 'Chrome';
       } else if (agent.indexOf('safari') !== -1) {
         envValue.browserVer = getVer(agent, 'version/', ' ');
+        envValue.browserName = 'Safari';
       } else {
         envValue.browserVer = '0';
       }

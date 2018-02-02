@@ -42,6 +42,7 @@ describe('browserEnv', () => {
       assert.isFalse(retVal.isSP);
       assert.isTrue(retVal.isIE);
       assert.isFalse(retVal.isWebKit);
+      assert.deepEqual(retVal.browserName, 'MSIE');
       assert.deepEqual(retVal.browserVer, '7.0');
       assert.deepEqual(retVal.OSVer, '5.1');
     });
@@ -51,6 +52,7 @@ describe('browserEnv', () => {
       assert.isFalse(retVal.isSP);
       assert.isTrue(retVal.isIE);
       assert.isFalse(retVal.isWebKit);
+      assert.deepEqual(retVal.browserName, 'MSIE');
       assert.deepEqual(retVal.browserVer, '9.0');
       assert.deepEqual(retVal.OSVer, '6.1');
     });
@@ -60,6 +62,7 @@ describe('browserEnv', () => {
       assert.isFalse(retVal.isSP);
       assert.isTrue(retVal.isIE);
       assert.isFalse(retVal.isWebKit);
+      assert.deepEqual(retVal.browserName, 'MSIE');
       assert.deepEqual(retVal.browserVer, '11.0');
       assert.deepEqual(retVal.OSVer, '6.3');
       assert.deepEqual(retVal.clickEv, 'click');
@@ -70,6 +73,7 @@ describe('browserEnv', () => {
       assert.isFalse(retVal.isSP);
       assert.isFalse(retVal.isIE);
       assert.isTrue(retVal.isWebKit);
+      assert.deepEqual(retVal.browserName, 'Chrome');
       assert.deepEqual(retVal.browserVer, '28.0.1500.52');
       assert.deepEqual(retVal.OSVer, null);
       assert.deepEqual(retVal.clickEv, 'click');
@@ -80,6 +84,7 @@ describe('browserEnv', () => {
       assert.isFalse(retVal.isSP);
       assert.isFalse(retVal.isIE);
       assert.isTrue(retVal.isWebKit);
+      assert.deepEqual(retVal.browserName, 'Chrome');
       assert.deepEqual(retVal.browserVer, '28.0.1500.52');
       assert.deepEqual(retVal.clickEv, 'click');
     });
@@ -90,6 +95,7 @@ describe('browserEnv', () => {
       assert.isFalse(retVal.isIE);
       assert.isTrue(retVal.isWebKit);
       assert.deepEqual(retVal.browserVer, '11.0');
+      assert.deepEqual(retVal.browserName, 'Safari');
       assert.deepEqual(retVal.OSVer, null);
       assert.deepEqual(retVal.clickEv, 'click');
     });
