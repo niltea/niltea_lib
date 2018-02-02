@@ -32,8 +32,10 @@ interface envObj {
   scrollEv: string;
 }
 
-const browserEnv = (argAgent) => {// UserAgentを取得
+const getEnv = (argAgent = null) => {// UserAgentを取得
   const agent: string = argAgent.toLowerCase() || navigator.userAgent.toLowerCase();
+  if (!agent) return;
+
   // 返すオブジェクトを仮生成
   const envValue: envObj = {
     isPC: true,
@@ -111,5 +113,5 @@ const browserEnv = (argAgent) => {// UserAgentを取得
 
 export default {
   getVer,
-  browserEnv,
+  getEnv,
 };

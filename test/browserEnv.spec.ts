@@ -1,4 +1,4 @@
-import {assert} from 'chai';
+import { assert } from 'chai';
 import browserEnv from '../src/class/browserEnv';
 
 // test string
@@ -14,7 +14,7 @@ const AND4 = 'Mozilla/5.0 (Linux; U; Android 4.1.1; ja-jp; Galaxy Nexus Build/JR
 describe('browserEnv', () => {
   describe('getVer', () => {
     it('returns undef correctly', () => {
-      assert.isUndefined(browserEnv.getVer(MSIE9, 'mac os ', /;\)/));
+      assert.isUndefined(browserEnv.getVer(MSIE9, 'mac os ', ';'));
     });
     it('returns OS Version correctly', () => {
       assert.deepEqual(browserEnv.getVer(MSIE7, 'windows ', ')'), "nt 5.1");
@@ -37,7 +37,7 @@ describe('browserEnv', () => {
   });
   describe('browserEnv', () => {
     it('defines IE 7', () => {
-      const retVal = browserEnv.browserEnv(MSIE7);
+      const retVal = browserEnv.getEnv(MSIE7);
       assert.isTrue(retVal.isPC);
       assert.isFalse(retVal.isSP);
       assert.isTrue(retVal.isIE);
@@ -46,7 +46,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.OSVer, '5.1');
     });
     it('defines IE 9', () => {
-      const retVal = browserEnv.browserEnv(MSIE9);
+      const retVal = browserEnv.getEnv(MSIE9);
       assert.isTrue(retVal.isPC);
       assert.isFalse(retVal.isSP);
       assert.isTrue(retVal.isIE);
@@ -55,7 +55,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.OSVer, '6.1');
     });
     it('defines IE 11', () => {
-      const retVal = browserEnv.browserEnv(MSIE11);
+      const retVal = browserEnv.getEnv(MSIE11);
       assert.isTrue(retVal.isPC);
       assert.isFalse(retVal.isSP);
       assert.isTrue(retVal.isIE);
@@ -65,7 +65,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.clickEv, 'click');
     });
     it('defines Chrome 28', () => {
-      const retVal = browserEnv.browserEnv(CG28);
+      const retVal = browserEnv.getEnv(CG28);
       assert.isTrue(retVal.isPC);
       assert.isFalse(retVal.isSP);
       assert.isFalse(retVal.isIE);
@@ -75,7 +75,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.clickEv, 'click');
     });
     it('defines Chrome 28', () => {
-      const retVal = browserEnv.browserEnv(CG28);
+      const retVal = browserEnv.getEnv(CG28);
       assert.isTrue(retVal.isPC);
       assert.isFalse(retVal.isSP);
       assert.isFalse(retVal.isIE);
@@ -84,7 +84,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.clickEv, 'click');
     });
     it('defines Safari 11', () => {
-      const retVal = browserEnv.browserEnv(SF11);
+      const retVal = browserEnv.getEnv(SF11);
       assert.isTrue(retVal.isPC);
       assert.isFalse(retVal.isSP);
       assert.isFalse(retVal.isIE);
@@ -94,7 +94,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.clickEv, 'click');
     });
     it('defines iOS 6', () => {
-      const retVal = browserEnv.browserEnv(iOS6);
+      const retVal = browserEnv.getEnv(iOS6);
       assert.isFalse(retVal.isPC);
       assert.isTrue(retVal.isSP);
       assert.isFalse(retVal.isIE);
@@ -105,7 +105,7 @@ describe('browserEnv', () => {
       assert.deepEqual(retVal.clickEv, 'touchend');
     });
     it('defines Android 4', () => {
-      const retVal = browserEnv.browserEnv(AND4);
+      const retVal = browserEnv.getEnv(AND4);
       assert.isFalse(retVal.isPC);
       assert.isTrue(retVal.isSP);
       assert.isFalse(retVal.isIE);
