@@ -33,8 +33,9 @@ interface envObj {
 }
 
 const getEnv = (argAgent = null) => {// UserAgentを取得
-  const agent: string = argAgent.toLowerCase() || navigator.userAgent.toLowerCase();
-  if (!agent) return;
+  const agentRaw: string = argAgent || navigator.userAgent;
+  if (!agentRaw) return;
+  const agent = agentRaw.toLowerCase();
 
   // 返すオブジェクトを仮生成
   const envValue: envObj = {
