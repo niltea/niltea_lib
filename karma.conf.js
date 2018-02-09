@@ -16,7 +16,7 @@ module.exports = (config) => {
     // list of files / patterns to load in the browser
     files: [
       'test/**/*.ts',
-      'test/**/*.js',
+      'test/**/*.html',
     ],
 
 
@@ -28,7 +28,8 @@ module.exports = (config) => {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      '**/*.ts': ['webpack'],
+      '**/*.ts'  : ['webpack'],
+      '**/*.html': 'html2js',
     },
     webpack: {
       resolve: {
@@ -45,6 +46,7 @@ module.exports = (config) => {
       'karma-webpack',
       'karma-chrome-launcher',
       'karma-typescript-preprocessor',
+      'karma-html2js-preprocessor',
     ],
 
 

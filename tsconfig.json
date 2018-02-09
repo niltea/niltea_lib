@@ -4,7 +4,9 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "allowJs": true,
-    "checkJs": true
+    "checkJs": true,
+    "target": "esnext",
+    "lib": ["dom", "es2015"]
   },
   "include": [
     "src/*"
