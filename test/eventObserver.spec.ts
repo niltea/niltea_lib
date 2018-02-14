@@ -39,6 +39,9 @@ describe('eventObserver', () => {
     observer = null;
     done();
   });
+  after(() => {
+    document.body.innerHTML = '';
+  });
   describe('can add event', () => {
     it('can create event observer', () => {
       assert.deepEqual(observer.eventName, 'click');
@@ -89,6 +92,7 @@ describe('eventObserver', () => {
       }, 'testEvent');
       const evt = document.createEvent("HTMLEvents");
       evt.initEvent('click', true, true );
+      // fire Event
       container.dispatchEvent(evt);
     });
   });
