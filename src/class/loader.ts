@@ -1,32 +1,44 @@
 const debug = false;
-const backgroundImageClassName = 'loader_bgi';
 
 const log = (() => {
   if (!debug) {
-    return () => {
+    return (...arg: any[]) => {
       return null;
     };
   }
-  return (...arg) => {
+  return (...arg: any[]) => {
     // eslint-disable-next-line no-console
-    console.log(...arg);
+    console.log(arg);
   };
 })();
 
-export default new class Loader {
+export default class Loader {
+  private bgClassName: string = 'loader_bgi';
+
+  private images: string[];
+  private receivedCount: number;
+  private expectedCount: number;
+
+  // callbacks
+  private onEach: (receivedCount: number) => any;
+  private progressContainer: HTMLElement;
+  private onComplete: () => any;
+
   constructor() {
-    document.addEventListener('DOMContentLoaded', () => {
-      log('Loader constructor called');
-    });
+    log('Loader constructor called');
+    // document.addEventListener('DOMContentLoaded', () => {});
   }
 
-  activateLoader(onComplete, onEach, progressContainer) {
+  activateLoader(onComplete: () => {} = null, onEach = null, progressContainer: HTMLElement = null) {
     log('Loader activateLoader called');
+    // TODO: move to constructor
     // ロード済みの画像数
     this.receivedCount = 0;
     // 画像を探してくる
-    this.images = this.constructor.findImages();
+    this.images = this.findImages();
     log('images', this.images);
+
+    // 画像数
     this.expectedCount = this.images.length;
 
     // 画像読み込みごとのcallback: 渡されていればそれを使う
@@ -34,46 +46,55 @@ export default new class Loader {
     if (typeof onEach === 'function') {
       this.onEach = onEach;
     } else {
-      this.progressContainer = (progressContainer) || document.getElementById('progressContainer');
-      this.onEach = (!this.progressContainer) ? null : (receivedCount) => {
+      this.progressContainer = progressContainer || document.getElementById('progressContainer');
+      this.onEach = (!this.progressContainer) ? null : (receivedCount: number) => {
         this.progressContainer.textContent = `${Math.round((receivedCount / this.expectedCount) * 100)}%`;
       };
     }
     log('onEach', this.onEach);
 
     // ロード完了時のcallback: 渡されていればそれを使う
-    this.onComplete = (typeof onComplete === 'function') ? onComplete : this.constructor.defaultLoadedCB;
+    this.onComplete = (typeof onComplete === 'function') ? onComplete : this.defaultLoadedCB;
     log('onComplete', this.onComplete);
 
     // 各画像読み込み後の処理を仕込む
     this.setWatcher();
+
+    return {
+      images: this.images,
+      expectedCount: this.expectedCount,
+    }
   }
 
-  static findImages() {
+  // HTML中から画像を探し出す
+  private findImages(): string[] {
     log('Loader findImages called');
-    const images = [];
-    // img要素を探してくる
-    const targetsImg = [].slice.call(document.getElementsByTagName('img'));
-    targetsImg.forEach((el) => {
-      const imgSrc = el.getAttribute('src');
+    const imageURLs: string[] = [];
+
+    // img要素を探し、foreachでsrcを格納する
+    const imgElements: HTMLElement[] = [].slice.call(document.getElementsByTagName('img'));
+    imgElements.forEach(($img: HTMLElement) => {
+      const imgSrc: string = $img.getAttribute('src');
       // srcが空なら中断
       if (!imgSrc) return;
-      images.push(imgSrc);
+      // URLを配列に格納
+      imageURLs.push(imgSrc);
     });
 
-    const targetsBgi = [].slice.call(document.getElementsByClassName(backgroundImageClassName));
-    const bgi = 'background-image';
-    targetsBgi.forEach((el) => {
+    const bgi: string = 'background-image';
+    // 指定されたclassNameを含む要素からbackground-imageの値を取得・格納する
+    const targetsBgi = [].slice.call(document.getElementsByClassName(this.bgClassName));
+    targetsBgi.forEach(($el) => {
       // elementが空なら中断
-      if (!el) return;
+      if (!$el) return;
       // 背景画像を取得し、取得できなければ中断
-      const bgSrc = el.style[bgi] || getComputedStyle(el, '')[bgi];
+      const bgSrc = $el.style[bgi] || getComputedStyle($el)[bgi];
       if (!bgSrc || bgSrc === 'none') return;
 
-      // 画像をpush
-      images.push(bgSrc.replace(/^url\(|"|\)$/g, ''));
+      // URLを配列に格納
+      imageURLs.push(bgSrc.replace(/^url\(|"|\)$/g, ''));
     });
-    return images;
+    return imageURLs;
   }
 
   setWatcher() {
@@ -107,7 +128,7 @@ export default new class Loader {
     }
   }
 
-  static defaultLoadedCB() {
+  private defaultLoadedCB() {
     log('Loader: all content has been loaded.');
   }
-}();
+};
