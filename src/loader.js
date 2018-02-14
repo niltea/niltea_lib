@@ -1,99 +1,113 @@
 const debug = false;
-const backgroundImageClassname = 'loader_bgi';
+const backgroundImageClassName = 'loader_bgi';
 
 const log = (() => {
-	/* eslint-disable no-console */
-	if (!debug) return () => null;
-	return (...arg) => { console.log(...arg); };
+  if (!debug) {
+    return () => {
+      return null;
+    };
+  }
+  return (...arg) => {
+    // eslint-disable-next-line no-console
+    console.log(...arg);
+  };
 })();
 
 export default new class Loader {
-	constructor() {
-		document.addEventListener('DOMContentLoaded', () => {
-			log('Loader constructor called');
-		});
-	}
-	activateLoader(onComplete, onEach, progressContainer) {
-		log('Loader activateLoader called');
-		// ロード済みの画像数
-		this.receivedCount = 0;
-		// 画像を探してくる
-		this.images = this.findImages();
-		this.expectedCount = this.images.length;
-		// 完了時の動作が定義されていればそれを使う
-		this.onComplete = (typeof onComplete === 'function') ? onComplete : this.contentLoaded;
-		// 画像読み込みごとの動作が定義されていればそれを使う。
-		// なければ定義する
-		if (typeof onEach !== 'function') {
-			this.progressContainer = (progressContainer) || document.getElementById('progressContainer');
-			onEach = (!this.progressContainer) ? null : (receivedCount) => {
-				const progress = `${Math.round(receivedCount / this.expectedCount * 100)}%`;
-				this.progressContainer.textContent = progress;
-			};
-		}
-		this.onEach = onEach;
+  constructor() {
+    document.addEventListener('DOMContentLoaded', () => {
+      log('Loader constructor called');
+    });
+  }
 
-		log('images', this.images);
-		log('onComplete', this.onComplete);
-		log('onEach', this.onEach);
-		this.setWatcher();
-	}
-	findImages() {
-		log('Loader findImages called');
-		const images = [];
-		// img要素を探してくる
-		const targets_img = [].slice.call(document.getElementsByTagName('img'));
-		targets_img.forEach((el) => {
-			const _src = el.getAttribute('src');
-			// srcが空なら中断
-			if (!_src) return;
-			images.push(_src);
-		});
+  activateLoader(onComplete, onEach, progressContainer) {
+    log('Loader activateLoader called');
+    // ロード済みの画像数
+    this.receivedCount = 0;
+    // 画像を探してくる
+    this.images = this.constructor.findImages();
+    log('images', this.images);
+    this.expectedCount = this.images.length;
 
+    // 画像読み込みごとのcallback: 渡されていればそれを使う
+    // なければ定義する
+    if (typeof onEach === 'function') {
+      this.onEach = onEach;
+    } else {
+      this.progressContainer = (progressContainer) || document.getElementById('progressContainer');
+      this.onEach = (!this.progressContainer) ? null : (receivedCount) => {
+        this.progressContainer.textContent = `${Math.round((receivedCount / this.expectedCount) * 100)}%`;
+      };
+    }
+    log('onEach', this.onEach);
 
-		const targets_bgi = [].slice.call(document.getElementsByClassName(backgroundImageClassname));
-		const bgi = 'background-image';
-		targets_bgi.forEach((el) => {
-			// elementが空なら中断
-			if (!el) return;
-			// 背景画像を取得し、取得できなければ中断
-			const _src = el.style[bgi] || getComputedStyle(el, '')[bgi];
-			if (!_src || _src == 'none') return;
+    // ロード完了時のcallback: 渡されていればそれを使う
+    this.onComplete = (typeof onComplete === 'function') ? onComplete : this.constructor.defaultLoadedCB;
+    log('onComplete', this.onComplete);
 
-			// 画像をpush
-			images.push(_src.replace(/^url\(|"|\)$/g, ''));
-		});
-		return images;
-	}
-	setWatcher() {
-		log('Loader setWatcher called');
-		// if images is empty, go to loaded Function
-		if (!this.images || this.images.length <= 0) {
-			this.onComplete();
-			return;
-		}
+    // 各画像読み込み後の処理を仕込む
+    this.setWatcher();
+  }
 
-		// 画像の数だけ_loadListenerが呼ばれたらcallbackが呼ばれる
-		// const _loadListener(expectedCount = , setting.onEach, setting.onComplete);
-		this.images.forEach((url) => {
-			const img = new Image();
-			document.body.appendChild(img);
-			img.width = img.height = 1;
-			img.onload = this._loadListener.bind(this);
-			img.src = url;
-		});
-	}
-	_loadListener(e) {
-		// remove temporary image
-		const tgt = e.target;
-		if (tgt) tgt.parentNode.removeChild(tgt);
-		this.receivedCount += 1;
-		if (this.onEach) this.onEach(this.receivedCount);
-		if (this.receivedCount >= this.expectedCount) {
-			this.onComplete();
-		}
-	}
-	contentLoaded() {
-		log('Loader contentLoaded called');
-	}
+  static findImages() {
+    log('Loader findImages called');
+    const images = [];
+    // img要素を探してくる
+    const targetsImg = [].slice.call(document.getElementsByTagName('img'));
+    targetsImg.forEach((el) => {
+      const imgSrc = el.getAttribute('src');
+      // srcが空なら中断
+      if (!imgSrc) return;
+      images.push(imgSrc);
+    });
+
+    const targetsBgi = [].slice.call(document.getElementsByClassName(backgroundImageClassName));
+    const bgi = 'background-image';
+    targetsBgi.forEach((el) => {
+      // elementが空なら中断
+      if (!el) return;
+      // 背景画像を取得し、取得できなければ中断
+      const bgSrc = el.style[bgi] || getComputedStyle(el, '')[bgi];
+      if (!bgSrc || bgSrc === 'none') return;
+
+      // 画像をpush
+      images.push(bgSrc.replace(/^url\(|"|\)$/g, ''));
+    });
+    return images;
+  }
+
+  setWatcher() {
+    log('Loader setWatcher called');
+    // if images is empty, go to loaded Function
+    if (!this.images || this.images.length <= 0) {
+      this.onComplete();
+      return;
+    }
+
+    // 画像の数だけloadListenerが呼ばれたらcallbackが呼ばれる
+    // const loadListener(expectedCount = , setting.onEach, setting.onComplete);
+    this.images.forEach((url) => {
+      const img = new Image();
+      document.body.appendChild(img);
+      img.width = 1;
+      img.height = 1;
+      img.onload = this.loadListener.bind(this);
+      img.src = url;
+    });
+  }
+
+  loadListener(e) {
+    // remove temporary image
+    const tgt = e.target;
+    if (tgt) tgt.parentNode.removeChild(tgt);
+    this.receivedCount += 1;
+    if (this.onEach) this.onEach(this.receivedCount);
+    if (this.receivedCount >= this.expectedCount) {
+      this.onComplete();
+    }
+  }
+
+  static defaultLoadedCB() {
+    log('Loader: all content has been loaded.');
+  }
 }();
